@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RandomGhostMove : MonoBehaviour {
+public class SuperGhostMove : MonoBehaviour {
 	
 	public Transform[] waypoints;
 	int cur = 0;
 	bool started = false;
 	enum Direction {up, down, left, right, error};
-	Direction direction;
+	Direction cdirection;
 
 	public float speed = 0.1f;
 
@@ -20,7 +20,7 @@ public class RandomGhostMove : MonoBehaviour {
 			waypointWalk ();
 		}
 		if (started) {
-			randomWalk ();
+			avoidWalk ();
 		}
 	}
 
@@ -48,7 +48,7 @@ public class RandomGhostMove : MonoBehaviour {
 	}
 
 	void randomWalk(){
-		Direction curr = direction;
+		Direction curr = cdirection;
 		Direction n = Direction.error;
 
 		Vector2 p = Vector2.MoveTowards(transform.position, dest, speed);
@@ -77,23 +77,26 @@ public class RandomGhostMove : MonoBehaviour {
 				break;
 			}
 
+			move (n);
 
-			switch (n) {
-			case Direction.down:
-				dest = (Vector2)transform.position - Vector2.up;
-				break;
-			case Direction.up:
-				dest = (Vector2)transform.position + Vector2.up;
-				break;
-			case Direction.right:
-				dest = (Vector2)transform.position + Vector2.right;
-				break;
-			case Direction.left:
-				dest = (Vector2)transform.position - Vector2.right;
-				break;
-			}
 		}
+	}
 
+	void move(Direction direction){
+		switch (direction) {
+		case Direction.down:
+			dest = (Vector2)transform.position - Vector2.up;
+			break;
+		case Direction.up:
+			dest = (Vector2)transform.position + Vector2.up;
+			break;
+		case Direction.right:
+			dest = (Vector2)transform.position + Vector2.right;
+			break;
+		case Direction.left:
+			dest = (Vector2)transform.position - Vector2.right;
+			break;
+		}
 		// Animation Parameters
 		Vector2 dir = dest - (Vector2)transform.position;
 		setDirection (dir.x, dir.y);
@@ -121,18 +124,113 @@ public class RandomGhostMove : MonoBehaviour {
 		setDirection (dir.x, dir.y);
 	}
 
+	void honeWalk(){
+		GameObject pac = GameObject.Find ("pacman");
+		if (pac == null) {
+			randomWalk ();
+			return;
+		}
+
+		// Move closer to Destination
+		Vector2 p = Vector2.MoveTowards(transform.position, dest, speed);
+		GetComponent<Rigidbody2D>().MovePosition(p);
+
+		// Check for new direction if not moving
+		if ((Vector2)transform.position == dest) {
+			bool uvalid = valid (Vector2.up);
+			bool dvalid = valid (-Vector2.up) && valid (-Vector2.up * 2);
+			bool rvalid = valid(Vector2.right) && valid(Vector2.right - Vector2.up * 0.5f);
+			bool lvalid = valid(-Vector2.right) && valid(-Vector2.right - Vector2.up * 0.5f);
+
+			Vector3 pacpos = pac.transform.position;
+			Direction dir1 = Direction.error;
+			Direction dir2 = Direction.error;
+			if (transform.position.x < pacpos.x && rvalid && cdirection != Direction.left) {
+				dir1 = Direction.right;
+			} else if (transform.position.x > pacpos.x && lvalid  && cdirection != Direction.right) {
+				dir1 = Direction.left;
+			}
+			if (transform.position.y < pacpos.y && uvalid && cdirection != Direction.down) {
+				dir2 = Direction.up;
+			} else if (transform.position.y > pacpos.y && dvalid && cdirection != Direction.up) {
+				dir2 = Direction.down;
+			}
+
+			if (dir1 == Direction.error && dir2 == Direction.error) {
+				randomWalk ();
+				return;
+			} else {
+				if (dir1 != Direction.error) {
+					move (dir1);
+				} else {
+					move (dir2);
+				}
+			}
+
+		}
+			
+	}
+
+
+	void avoidWalk(){
+		GameObject pac = GameObject.Find ("pacman");
+		if (pac == null) {
+			randomWalk ();
+			return;
+		}
+
+		// Move closer to Destination
+		Vector2 p = Vector2.MoveTowards(transform.position, dest, speed);
+		GetComponent<Rigidbody2D>().MovePosition(p);
+
+		// Check for new direction if not moving
+		if ((Vector2)transform.position == dest) {
+			bool uvalid = valid (Vector2.up);
+			bool dvalid = valid (-Vector2.up) && valid (-Vector2.up * 2);
+			bool rvalid = valid(Vector2.right) && valid(Vector2.right - Vector2.up * 0.5f);
+			bool lvalid = valid(-Vector2.right) && valid(-Vector2.right - Vector2.up * 0.5f);
+
+			Vector3 pacpos = pac.transform.position;
+			Direction dir1 = Direction.error;
+			Direction dir2 = Direction.error;
+			if (transform.position.x < pacpos.x && lvalid && cdirection != Direction.right) {
+				dir1 = Direction.left;
+			} else if (transform.position.x > pacpos.x && rvalid && cdirection != Direction.left) {
+				dir1 = Direction.right;
+			}
+			if (transform.position.y < pacpos.y && dvalid && cdirection != Direction.up) {
+				dir2 = Direction.down;
+			} else if (transform.position.y > pacpos.y && uvalid && cdirection != Direction.down) {
+				dir2 = Direction.up;
+			}
+
+			if (dir1 == Direction.error && dir2 == Direction.error) {
+				randomWalk ();
+				return;
+			} else {
+				if (dir1 != Direction.error) {
+					move (dir1);
+				} else {
+					move (dir2);
+				}
+			}
+
+		}
+
+	}
+
 	//Store current direction
 	void setDirection(float x, float y){
 		GetComponent<Animator>().SetFloat("DirX", x);
 		GetComponent<Animator>().SetFloat("DirY", y);
 		if (x > 0.1)
-			direction = Direction.right;
+			cdirection = Direction.right;
 		else if (x < -0.1)
-			direction = Direction.left;
+			cdirection = Direction.left;
 		else if (y > 0.1)
-			direction = Direction.up;
+			cdirection = Direction.up;
 		else if (y < -0.1)
-			direction = Direction.down;
+			cdirection = Direction.down;
 	}
 
 	void OnTriggerEnter2D(Collider2D co) {

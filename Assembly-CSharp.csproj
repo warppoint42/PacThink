@@ -57,7 +57,7 @@
      <Compile Include="Assets\Scripts\GhostMove.cs" />
      <Compile Include="Assets\Scripts\Pacdot.cs" />
      <Compile Include="Assets\Scripts\PacmanMove.cs" />
-     <Compile Include="Assets\Scripts\RandomGhostMove.cs" />
+     <Compile Include="Assets\Scripts\SuperGhostMove.cs" />
      <None Include="Assets\NeuroSkyAssets\NeuroSkyTGCController\Readme.txt" />
  <Reference Include="UnityEngine.UIAutomation">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UIAutomation/UnityEngine.UIAutomation.dll</HintPath>
