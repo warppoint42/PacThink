@@ -10,7 +10,9 @@ public class SuperGhostMove : MonoBehaviour {
 	enum Direction {up, down, left, right, error};
 	Direction cdirection;
 
+	public const baseSpeed = 0.1f;
 	public float speed = 0.1f;
+	public float aggression = 0;
 
 	Vector2 dest = Vector2.zero;
 	GameObject camera;
@@ -19,7 +21,7 @@ public class SuperGhostMove : MonoBehaviour {
 	void Start(){
 
 		camera = GameObject.Find ("Camera");
-		
+
 	}
 
 	void FixedUpdate () {
@@ -27,13 +29,18 @@ public class SuperGhostMove : MonoBehaviour {
 			waypointWalk ();
 		}
 		if (started) {
-			int connection = camera.GetComponent<DisplayData> ().getpoorSignal1 ();
-
-			if(connection == 0 || connection == 200){
+			DisplayData sn = camera.GetComponent<DisplayData> ();
+			int connection = sn.getpoorSignal1 ();
+			if(connection == 200 || connection == -1){
 				//No connection or not engaged
-				randomWalk();
+				speed = baseSpeed;
+				if (randomBool (aggression)) {
+					honeWalk ();
+				} else {
+					randomWalk ();
+				}
 			} else {
-				honeWalk ();
+				
 			}
 		}
 	}
@@ -262,6 +269,10 @@ public class SuperGhostMove : MonoBehaviour {
 
 	bool randomBool(){
 		return (Random.value > 0.5f);
+	}
+
+	bool randomBool(float tprob){
+		return (Random.value < tprob);
 	}
 
 	Direction randNew(Direction same, bool validsame, Direction dir1, bool valid1, Direction dir2, bool valid2, Direction opp, bool validopp){
