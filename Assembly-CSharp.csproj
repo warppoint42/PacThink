@@ -57,6 +57,7 @@
      <Compile Include="Assets\Scripts\GhostMove.cs" />
      <Compile Include="Assets\Scripts\Pacdot.cs" />
      <Compile Include="Assets\Scripts\PacmanMove.cs" />
+     <Compile Include="Assets\Scripts\RandomGhostMove.cs" />
      <None Include="Assets\NeuroSkyAssets\NeuroSkyTGCController\Readme.txt" />
  <Reference Include="UnityEngine.UIAutomation">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UIAutomation/UnityEngine.UIAutomation.dll</HintPath>
@@ -85,6 +86,12 @@
  <Reference Include="UnityEngine.SpatialTracking">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
+ <Reference Include="Jayrock">
+ <HintPath>/Users/lorenmiller/Desktop/Stanford 17-18/MUSIC257/MUSIC257Pacman/PacThink/Assets/NeuroSkyAssets/NeuroSkyScripts/Jayrock.dll</HintPath>
+ </Reference>
+ <Reference Include="Jayrock.Json">
+ <HintPath>/Users/lorenmiller/Desktop/Stanford 17-18/MUSIC257/MUSIC257Pacman/PacThink/Assets/NeuroSkyAssets/NeuroSkyScripts/Jayrock.Json.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEngine.Advertisements">
  <HintPath>/Users/lorenmiller/Library/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.3/UnityEngine.Advertisements.dll</HintPath>
  </Reference>
@@ -96,12 +103,6 @@
  </Reference>
  <Reference Include="UnityEngine.StandardEvents">
  <HintPath>/Users/lorenmiller/Library/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.10/UnityEngine.StandardEvents.dll</HintPath>
- </Reference>
- <Reference Include="Jayrock">
- <HintPath>/Users/lorenmiller/Desktop/MUSIC257Pacman/PacThink/Assets/NeuroSkyAssets/NeuroSkyScripts/Jayrock.dll</HintPath>
- </Reference>
- <Reference Include="Jayrock.Json">
- <HintPath>/Users/lorenmiller/Desktop/MUSIC257Pacman/PacThink/Assets/NeuroSkyAssets/NeuroSkyScripts/Jayrock.Json.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
