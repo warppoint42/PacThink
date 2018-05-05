@@ -13,14 +13,28 @@ public class SuperGhostMove : MonoBehaviour {
 	public float speed = 0.1f;
 
 	Vector2 dest = Vector2.zero;
+	GameObject camera;
 
+
+	void Start(){
+
+		camera = GameObject.Find ("Camera");
+		
+	}
 
 	void FixedUpdate () {
 		if (!started) {
 			waypointWalk ();
 		}
 		if (started) {
-			avoidWalk ();
+			int connection = camera.GetComponent<DisplayData> ().getpoorSignal1 ();
+
+			if(connection == 0 || connection == 200){
+				//No connection or not engaged
+				randomWalk();
+			} else {
+				honeWalk ();
+			}
 		}
 	}
 

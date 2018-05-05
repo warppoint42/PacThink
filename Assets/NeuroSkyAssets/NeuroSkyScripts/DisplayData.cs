@@ -25,8 +25,21 @@ public class DisplayData : MonoBehaviour
 		controller.UpdateMeditationEvent += OnUpdateMeditation;
 		
 		controller.UpdateDeltaEvent += OnUpdateDelta;
-		
+
     }
+
+
+	public int getpoorSignal1(){
+		return poorSignal1;
+	}
+
+	public int getattention1(){
+		return attention1;
+	}
+
+	public int getmeditation1(){
+		return meditation1;
+	}
 	
 	void OnUpdatePoorSignal(int value){
 		poorSignal1 = value;
