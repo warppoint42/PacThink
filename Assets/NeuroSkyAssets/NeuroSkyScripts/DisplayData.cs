@@ -12,6 +12,8 @@ public class DisplayData : MonoBehaviour
     private int poorSignal1;
     private int attention1;
     private int meditation1;
+	private int meditation0;
+	private int attention0;
 	
 	private float delta;
 
@@ -27,6 +29,12 @@ public class DisplayData : MonoBehaviour
 		controller.UpdateDeltaEvent += OnUpdateDelta;
 
     }
+
+	void Update()
+	{
+		meditation1 = Mathf.Lerp (meditation0, meditation1, delta);
+		attention1 = Mathf.Lerp (attention0, attention1, delta);
+	}
 
 
 	public int getpoorSignal1(){
@@ -56,10 +64,10 @@ public class DisplayData : MonoBehaviour
 		}
 	}
 	void OnUpdateAttention(int value){
-		attention1 = value;
+		attention0 = value;
 	}
 	void OnUpdateMeditation(int value){
-		meditation1 = value;
+		meditation0 = value;
 	}
 	void OnUpdateDelta(float value){
 		delta = value;

@@ -9,6 +9,8 @@ public class SuperGhostMove : MonoBehaviour
 	bool started = false;
 	enum Direction {up, down, left, right, error};
 	Direction cdirection;
+	public AudioClip[] death;
+	public AudioSource deathSource;
 
 	public const float baseSpeed = 0.1f;
 	public float speed = 0.005f;
@@ -292,11 +294,20 @@ public class SuperGhostMove : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D co) 
 	{
-		if (co.name == "pacman") {
+		if (co.name == "pacman" || co.name == "pacman(Clone)") 
+		{
 			Destroy (co.gameObject);
 			GameManager.instance.LoseLife ();
+			playDeathAudio ();
 		}
 	}
+
+	void playDeathAudio()
+	{
+		deathSource.clip = death[0];
+		deathSource.Play();
+	}
+
 
 	bool valid(Vector2 dir) 
 	{

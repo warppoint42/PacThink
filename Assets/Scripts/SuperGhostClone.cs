@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class SuperGhostClone : MonoBehaviour 
 {
-
 	public Transform[] waypoints;
 	int cur = 0;
 	bool started = false;
 	enum Direction {up, down, left, right, error};
 	Direction cdirection;
+	public AudioClip[] death;
+	public AudioSource deathSource;
 
 	public const float baseSpeed = 0.1f;
 	public float speed = 0.005f;
@@ -290,8 +291,18 @@ public class SuperGhostClone : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D co) 
 	{
-		if (co.name == "pacman")
-			Destroy(co.gameObject);
+		if (co.name == "pacman" || co.name == "pacman(Clone)") 
+		{
+			Destroy (co.gameObject);
+			GameManager.instance.LoseLife ();
+			playDeathAudio ();
+		}
+	}
+
+	void playDeathAudio()
+	{
+		deathSource.clip = death[0];
+		deathSource.Play();
 	}
 
 	bool valid(Vector2 dir) 
