@@ -2,61 +2,79 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SuperGhostMove : MonoBehaviour {
-	
+public class SuperGhostMove : MonoBehaviour 
+{	
 	public Transform[] waypoints;
 	int cur = 0;
 	bool started = false;
 	enum Direction {up, down, left, right, error};
 	Direction cdirection;
 
-	public const baseSpeed = 0.1f;
-	public float speed = 0.1f;
+	public const float baseSpeed = 0.1f;
+	public float speed = 0.005f;
 	public float aggression = 0;
+
+	private int playerAttention = 0;
+	private int playerMeditation = 0;
 
 	Vector2 dest = Vector2.zero;
 	GameObject camera;
 
-
-	void Start(){
-
+	void Start()
+	{
 		camera = GameObject.Find ("Camera");
-
 	}
 
-	void FixedUpdate () {
-		if (!started) {
+	void FixedUpdate () 
+	{	
+		// start with basic waypoint marker walk
+		playerAttention = camera.GetComponent<DisplayData> ().getattention1();
+		playerMeditation = camera.GetComponent<DisplayData> ().getmeditation1 ();
+
+		if (!started) 
+		{
 			waypointWalk ();
 		}
-		if (started) {
-			DisplayData sn = camera.GetComponent<DisplayData> ();
-			int connection = sn.getpoorSignal1 ();
-			if(connection == 200 || connection == -1){
+		// ghosts have left start, should check if the connection is made
+		if (started) 
+		{
+			if (playerAttention > 70)
+				speed = 0.1f;
+			else if (playerMeditation > 70)
+				speed = 0.05f;
+			else if (playerMeditation == 100)
+				speed = 0.0f;
+			else
+				speed = 0.1f;
+			
+			int connection = camera.GetComponent<DisplayData> ().getpoorSignal1 (); 
+			if(connection == 200 || connection == -1)
+			{
 				//No connection or not engaged
-				speed = baseSpeed;
-				if (randomBool (aggression)) {
-					honeWalk ();
-				} else {
-					randomWalk ();
-				}
-			} else {
-				
+				randomWalk ();
+			}
+			// if connection is made, start game with movement of player
+			else
+			{
+				honeWalk ();
 			}
 		}
 	}
 
-	void waypointWalk(){
+	void waypointWalk()
+	{
 		// Waypoint not reached yet? then move closer
-		if (transform.position != waypoints [cur].position) {
-			Vector2 p = Vector2.MoveTowards (transform.position,
-				waypoints [cur].position,
-				speed);
+		if (transform.position != waypoints [cur].position) 
+		{
+			Vector2 p = Vector2.MoveTowards (transform.position,waypoints [cur].position, speed);
 			GetComponent<Rigidbody2D> ().MovePosition (p);
 		}
 		// Waypoint reached, select next one, or change to random movement after waypoints
-		else {
+		else 
+		{
 			cur = (cur + 1) % waypoints.Length;
-			if (cur == 0) {
+			if (cur == 0) 
+			{
 				started = true;
 				dest = transform.position;
 				return;
@@ -68,7 +86,8 @@ public class SuperGhostMove : MonoBehaviour {
 		setDirection (dir.x, dir.y);
 	}
 
-	void randomWalk(){
+	void randomWalk()
+	{
 		Direction curr = cdirection;
 		Direction n = Direction.error;
 
@@ -77,13 +96,15 @@ public class SuperGhostMove : MonoBehaviour {
 
 
 		// Check for new direction if not moving
-		if ((Vector2)transform.position == dest) {
+		if ((Vector2)transform.position == dest) 
+		{
 			bool uvalid = valid (Vector2.up);
 			bool dvalid = valid (-Vector2.up) && valid (-Vector2.up * 2);
 			bool rvalid = valid(Vector2.right) && valid(Vector2.right - Vector2.up * 0.5f);
 			bool lvalid = valid(-Vector2.right) && valid(-Vector2.right - Vector2.up * 0.5f);
 
-			switch (curr) {
+			switch (curr) 
+			{
 			case Direction.down:
 				n = randNew (Direction.down, dvalid, Direction.right, rvalid, Direction.left, lvalid, Direction.up, uvalid);
 				break;
@@ -103,8 +124,10 @@ public class SuperGhostMove : MonoBehaviour {
 		}
 	}
 
-	void move(Direction direction){
-		switch (direction) {
+	void move(Direction direction)
+	{
+		switch (direction) 
+		{
 		case Direction.down:
 			dest = (Vector2)transform.position - Vector2.up;
 			break;
@@ -123,13 +146,15 @@ public class SuperGhostMove : MonoBehaviour {
 		setDirection (dir.x, dir.y);
 	}
 
-	void controlWalk(){
+	void controlWalk()
+	{
 		// Move closer to Destination
 			Vector2 p = Vector2.MoveTowards(transform.position, dest, speed);
 			GetComponent<Rigidbody2D>().MovePosition(p);
 	
 		// Check for Input if not moving
-			if ((Vector2)transform.position == dest) {
+			if ((Vector2)transform.position == dest) 
+			{
 				if (Input.GetKey(KeyCode.UpArrow) && valid(Vector2.up))
 					dest = (Vector2)transform.position + Vector2.up;
 				if (Input.GetKey(KeyCode.RightArrow) && valid(Vector2.right) && valid(Vector2.right - Vector2.up * 0.5f))
@@ -145,9 +170,11 @@ public class SuperGhostMove : MonoBehaviour {
 		setDirection (dir.x, dir.y);
 	}
 
-	void honeWalk(){
+	void honeWalk()
+	{
 		GameObject pac = GameObject.Find ("pacman");
-		if (pac == null) {
+		if (pac == null) 
+		{
 			randomWalk ();
 			return;
 		}
@@ -157,7 +184,8 @@ public class SuperGhostMove : MonoBehaviour {
 		GetComponent<Rigidbody2D>().MovePosition(p);
 
 		// Check for new direction if not moving
-		if ((Vector2)transform.position == dest) {
+		if ((Vector2)transform.position == dest) 
+		{
 			bool uvalid = valid (Vector2.up);
 			bool dvalid = valid (-Vector2.up) && valid (-Vector2.up * 2);
 			bool rvalid = valid(Vector2.right) && valid(Vector2.right - Vector2.up * 0.5f);
@@ -166,36 +194,40 @@ public class SuperGhostMove : MonoBehaviour {
 			Vector3 pacpos = pac.transform.position;
 			Direction dir1 = Direction.error;
 			Direction dir2 = Direction.error;
-			if (transform.position.x < pacpos.x && rvalid && cdirection != Direction.left) {
+			if (transform.position.x < pacpos.x && rvalid && cdirection != Direction.left)
 				dir1 = Direction.right;
-			} else if (transform.position.x > pacpos.x && lvalid  && cdirection != Direction.right) {
+			else if (transform.position.x > pacpos.x && lvalid  && cdirection != Direction.right)
 				dir1 = Direction.left;
-			}
-			if (transform.position.y < pacpos.y && uvalid && cdirection != Direction.down) {
+			if (transform.position.y < pacpos.y && uvalid && cdirection != Direction.down)
 				dir2 = Direction.up;
-			} else if (transform.position.y > pacpos.y && dvalid && cdirection != Direction.up) {
+			else if (transform.position.y > pacpos.y && dvalid && cdirection != Direction.up)
 				dir2 = Direction.down;
-			}
 
-			if (dir1 == Direction.error && dir2 == Direction.error) {
+			if (dir1 == Direction.error && dir2 == Direction.error) 
+			{
 				randomWalk ();
 				return;
-			} else {
-				if (dir1 != Direction.error) {
+			} 
+			else 
+			{
+				if (dir1 != Direction.error) 
+				{
 					move (dir1);
-				} else {
+				} 
+				else 
+				{
 					move (dir2);
 				}
 			}
-
 		}
-			
 	}
 
 
-	void avoidWalk(){
+	void avoidWalk()
+	{
 		GameObject pac = GameObject.Find ("pacman");
-		if (pac == null) {
+		if (pac == null) 
+		{
 			randomWalk ();
 			return;
 		}
@@ -205,7 +237,8 @@ public class SuperGhostMove : MonoBehaviour {
 		GetComponent<Rigidbody2D>().MovePosition(p);
 
 		// Check for new direction if not moving
-		if ((Vector2)transform.position == dest) {
+		if ((Vector2)transform.position == dest) 
+		{
 			bool uvalid = valid (Vector2.up);
 			bool dvalid = valid (-Vector2.up) && valid (-Vector2.up * 2);
 			bool rvalid = valid(Vector2.right) && valid(Vector2.right - Vector2.up * 0.5f);
@@ -214,34 +247,37 @@ public class SuperGhostMove : MonoBehaviour {
 			Vector3 pacpos = pac.transform.position;
 			Direction dir1 = Direction.error;
 			Direction dir2 = Direction.error;
-			if (transform.position.x < pacpos.x && lvalid && cdirection != Direction.right) {
+			if (transform.position.x < pacpos.x && lvalid && cdirection != Direction.right)
 				dir1 = Direction.left;
-			} else if (transform.position.x > pacpos.x && rvalid && cdirection != Direction.left) {
+			else if (transform.position.x > pacpos.x && rvalid && cdirection != Direction.left)
 				dir1 = Direction.right;
-			}
-			if (transform.position.y < pacpos.y && dvalid && cdirection != Direction.up) {
+			if (transform.position.y < pacpos.y && dvalid && cdirection != Direction.up)
 				dir2 = Direction.down;
-			} else if (transform.position.y > pacpos.y && uvalid && cdirection != Direction.down) {
+			else if (transform.position.y > pacpos.y && uvalid && cdirection != Direction.down)
 				dir2 = Direction.up;
-			}
 
-			if (dir1 == Direction.error && dir2 == Direction.error) {
+			if (dir1 == Direction.error && dir2 == Direction.error) 
+			{
 				randomWalk ();
 				return;
-			} else {
-				if (dir1 != Direction.error) {
+			} 
+			else 
+			{
+				if (dir1 != Direction.error) 
+				{
 					move (dir1);
-				} else {
+				} 
+				else 
+				{
 					move (dir2);
 				}
 			}
-
 		}
-
 	}
 
 	//Store current direction
-	void setDirection(float x, float y){
+	void setDirection(float x, float y)
+	{
 		GetComponent<Animator>().SetFloat("DirX", x);
 		GetComponent<Animator>().SetFloat("DirY", y);
 		if (x > 0.1)
@@ -254,12 +290,16 @@ public class SuperGhostMove : MonoBehaviour {
 			cdirection = Direction.down;
 	}
 
-	void OnTriggerEnter2D(Collider2D co) {
-		if (co.name == "pacman")
-			Destroy(co.gameObject);
+	void OnTriggerEnter2D(Collider2D co) 
+	{
+		if (co.name == "pacman") {
+			Destroy (co.gameObject);
+			GameManager.instance.LoseLife ();
+		}
 	}
 
-	bool valid(Vector2 dir) {
+	bool valid(Vector2 dir) 
+	{
 		// Cast Line from 'next to Pac-Man' to 'Pac-Man'
 		Vector2 pos = transform.position;
 		RaycastHit2D hit = Physics2D.Linecast(pos + dir, pos);
@@ -267,23 +307,30 @@ public class SuperGhostMove : MonoBehaviour {
 	}
 		
 
-	bool randomBool(){
+	bool randomBool()
+	{
 		return (Random.value > 0.5f);
 	}
 
-	bool randomBool(float tprob){
+	bool randomBool(float tprob)
+	{
 		return (Random.value < tprob);
 	}
 
-	Direction randNew(Direction same, bool validsame, Direction dir1, bool valid1, Direction dir2, bool valid2, Direction opp, bool validopp){
+	Direction randNew(Direction same, bool validsame, Direction dir1, bool valid1, Direction dir2, bool valid2, Direction opp, bool validopp)
+	{
 		bool r = randomBool ();
 //		Debug.Log (validsame);
 //		Debug.Log (same.ToString ());
-		if ((r || (!valid1 && !valid2)) && validsame) {
+		if ((r || (!valid1 && !valid2)) && validsame) 
+		{
 			return same;
-		} else {
+		} 
+		else 
+		{
 			r = randomBool ();
-			if (r) {
+			if (r) 
+			{
 				Direction temp = dir1;
 				bool tempb = valid1;
 				dir1 = dir2;
@@ -291,15 +338,24 @@ public class SuperGhostMove : MonoBehaviour {
 				dir2 = temp;
 				valid2 = tempb;
 			}
-			if (valid1) {
+			if (valid1) 
+			{
 				return dir1;
-			} else if (valid2) {
+			} 
+			else if (valid2) 
+			{
 				return dir2;
-			} else if (validopp) {
+			} 
+			else if (validopp) 
+			{
 				return opp;
-			} else if (validsame) {
+			} 
+			else if (validsame) 
+			{
 				return same;
-			} else {
+			} 
+			else 
+			{
 				Debug.Log ("no valid dir");
 				return Direction.error;
 			}

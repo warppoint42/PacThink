@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
-public class GhostMove : MonoBehaviour {
+public class GhostMove : MonoBehaviour 
+{
 	public Transform[] waypoints;
 	int cur = 0;
 
 	public float speed = 0.3f;
+	private float resetDelay = 1.0f;
+	public GameObject loser;
 
 	void FixedUpdate () {
 		// Waypoint not reached yet? then move closer
@@ -25,7 +29,12 @@ public class GhostMove : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D co) {
-		if (co.name == "pacman")
-			Destroy(co.gameObject);
+		if (co.name == "pacman") 
+		{	
+			Destroy (co.gameObject);
+			loser.SetActive (true);
+			Time.timeScale = .25f;
+			Invoke ("Reset", resetDelay);
+		}	
 	}
 }

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PacmanMove : MonoBehaviour {
+public class PacmanMove : MonoBehaviour 
+{
 	public float speed = 0.4f;
 	Vector2 dest = Vector2.zero;
 
