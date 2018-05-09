@@ -32,8 +32,8 @@ public class DisplayData : MonoBehaviour
 
 	void Update()
 	{
-		meditation1 = Mathf.Lerp (meditation0, meditation1, delta);
-		attention1 = Mathf.Lerp (attention0, attention1, delta);
+		meditation1 = (int)Mathf.Lerp (meditation0, meditation1, Time.smoothDeltaTime);
+		attention1 = (int)Mathf.Lerp (attention0, attention1, Time.smoothDeltaTime);
 	}
 
 

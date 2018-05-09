@@ -33,7 +33,7 @@ public class SuperGhostClone : MonoBehaviour
 		playerAttention = camera.GetComponent<DisplayData>().getattention1();
 		playerMeditation = camera.GetComponent<DisplayData> ().getmeditation1 ();
 
-		if (playerAttention>70) 
+		if (playerAttention>60) 
 		{
 			speed = 0.1f;
 			if (!started) {
@@ -50,7 +50,7 @@ public class SuperGhostClone : MonoBehaviour
 			// if connection is made, start game with movement of player
 			else 
 			{
-				if (playerMeditation > 70)
+				if (playerMeditation > 60)
 					speed = 0.5f;
 				else if (playerMeditation == 100)
 					speed = 0.0f;

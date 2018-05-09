@@ -40,10 +40,10 @@ public class SuperGhostMove : MonoBehaviour
 		// ghosts have left start, should check if the connection is made
 		if (started) 
 		{
-			if (playerAttention > 70)
+			if (playerAttention > 60)
 				speed = 0.1f;
-			else if (playerMeditation > 70)
-				speed = 0.05f;
+			else if (playerMeditation > 60)
+				speed = 0.45f;
 			else if (playerMeditation == 100)
 				speed = 0.0f;
 			else
